@@ -695,7 +695,7 @@ const ConversationalEnglishPractice = () => {
                   {isListening ? (
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                       <div className="animate-pulse text-purple-600 text-xs sm:text-sm">
-                        말씀하시면 자동으로 단어를 배치합니다...
+                        말씀하세요. 완료되면 "중지하기" 버튼을 누르세요...
                       </div>
                       <div className="flex space-x-1">
                         <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full animate-bounce"></div>
@@ -754,7 +754,7 @@ const ConversationalEnglishPractice = () => {
                     >
                       {isListening ? <MicOff size={16} className="sm:w-5 sm:h-5" /> : <Mic size={16} className="sm:w-5 sm:h-5" />}
                       <span className="text-xs sm:text-sm">
-                        {isListening ? '중지 (최대 10초)' : '음성으로 말하기'}
+                        {isListening ? '중지하기' : '음성으로 말하기'}
                       </span>
                     </button>
                     

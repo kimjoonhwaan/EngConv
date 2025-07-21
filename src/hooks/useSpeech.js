@@ -54,12 +54,13 @@ export const useSpeech = () => {
     let finalTranscript = '';
     let isRecognitionActive = true;
 
-    // 10초 후 자동 종료 타이머
-    const timeoutId = setTimeout(() => {
+    // 60초 후 안전 종료 타이머 (자동 중지 방지용)
+    const safetyTimeoutId = setTimeout(() => {
       if (recognitionRef.current && isRecognitionActive) {
         recognitionRef.current.stop();
+        console.log('음성 인식이 60초 제한으로 인해 종료되었습니다.');
       }
-    }, 10000);
+    }, 60000);
 
     recognitionRef.current.onstart = () => {
       setIsListening(true);
@@ -78,38 +79,28 @@ export const useSpeech = () => {
         }
       }
       
-      // 최종 결과가 있으면 콜백 호출
+      // 최종 결과가 있어도 자동으로 중지하지 않고 계속 듣기
       if (finalTranscript.trim()) {
         onResult(finalTranscript.trim());
-        clearTimeout(timeoutId);
+        // 자동 중지 제거 - clearTimeout(safetyTimeoutId); 호출하지 않음
+        console.log('음성 인식 결과:', finalTranscript.trim(), '- 계속 듣는 중...');
       }
     };
 
     recognitionRef.current.onerror = (event) => {
       setIsListening(false);
       isRecognitionActive = false;
-      clearTimeout(timeoutId);
+      clearTimeout(safetyTimeoutId);
       if (onError) onError(event.error);
     };
 
     recognitionRef.current.onend = () => {
       setIsListening(false);
       isRecognitionActive = false;
-      clearTimeout(timeoutId);
+      clearTimeout(safetyTimeoutId);
       
-      // 만약 결과가 없고 에러도 없었다면, 다시 시도
-      if (!finalTranscript.trim() && isRecognitionActive) {
-        // 2초 후 다시 시작 (사용자가 말을 안 했을 경우)
-        setTimeout(() => {
-          if (isRecognitionActive && recognitionRef.current) {
-            try {
-              recognitionRef.current.start();
-            } catch (e) {
-              console.log('Recognition restart failed:', e);
-            }
-          }
-        }, 100);
-      }
+      // 자동 재시작 제거 - 사용자가 수동으로 중지했거나 에러로 인한 종료일 때만 끝남
+      console.log('음성 인식이 종료되었습니다.');
     };
 
     try {
